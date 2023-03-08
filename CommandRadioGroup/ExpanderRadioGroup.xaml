@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="CommandRadioGroup.ExpanderRadioGroup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:CommandRadioGroup"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="me">
+    <VerticalStackLayout>
+        <toolkit:Expander x:Name="expander" IsExpanded="{Binding Source={x:Reference me}, Path=IsExpandedInitially}">
+            <toolkit:Expander.Header>
+                <Grid RowDefinitions="30,auto">
+                    <Label
+                        Grid.Row="0"
+                        FontAttributes="Bold"
+                        FontSize="{Binding Source={x:Reference me}, Path=HeaderTextFontSize}"
+                        Text="Baboon"
+                        TextColor="{Binding Source={x:Reference me}, Path=HeaderTextColour}" />
+                    <Grid
+                        Grid.Row="1"
+                        ColumnDefinitions="15,5,*"
+                        RowDefinitions="auto">
+                        <Grid.IsVisible>
+                            <MultiBinding Converter="{local:AllTrueMultiConverter}">
+                                <Binding
+                                    Converter="{toolkit:InvertedBoolConverter}"
+                                    Path="IsExpanded"
+                                    Source="{x:Reference expander}" />
+                                <Binding
+                                    Converter="{toolkit:IsStringNotNullOrEmptyConverter}"
+                                    Path="SelectedText"
+                                    Source="{x:Reference me}" />
+                            </MultiBinding>
+                        </Grid.IsVisible>
+                        <Label Grid.Column="2" Text="{Binding Source={x:Reference me}, Path=SelectedText}" />
+                        <Label
+                            Grid.Column="0"
+                            FontFamily="{Binding Source={x:Reference me}, Path=FontIconFontFamily}"
+                            Text="{Binding Source={x:Reference me}, Path=SelectedOptionFontIcon}"
+                            TextColor="{Binding Source={x:Reference me}, Path=SelectedOptionFontIconTextColour}" />
+                    </Grid>
+                </Grid>
+            </toolkit:Expander.Header>
+            <StackLayout BindableLayout.ItemsSource="{Binding Source={x:Reference me}, Path=ItemSource}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            Padding="5"
+                            ColumnDefinitions="15,5,*"
+                            RowDefinitions="*">
+                            <Label Grid.Column="2" Text="{Binding Key}" />
+                            <Label
+                                Grid.Column="0"
+                                FontFamily="{Binding Source={x:Reference me}, Path=FontIconFontFamily}"
+                                Text="{Binding Source={x:Reference me}, Path=SelectedOptionFontIcon}"
+                                TextColor="{Binding Source={x:Reference me}, Path=SelectedOptionFontIconTextColour}">
+                                <Label.IsVisible>
+                                    <MultiBinding Converter="{local:EqualConverter}" ConverterParameter="">
+                                        <Binding Path="SelectedOption" Source="{x:Reference me}" />
+                                        <Binding Path="Key" />
+                                    </MultiBinding>
+                                </Label.IsVisible>
+                            </Label>
+                            <Label
+                                Grid.Column="0"
+                                FontFamily="{Binding Source={x:Reference me}, Path=FontIconFontFamily}"
+                                Text="{Binding Source={x:Reference me}, Path=UnselectedOptionFontIcon}">
+                                <Label.IsVisible>
+                                    <MultiBinding Converter="{local:NotEqualConverter}" ConverterParameter="">
+                                        <Binding Path="SelectedOption" Source="{x:Reference me}" />
+                                        <Binding Path="Key" />
+                                    </MultiBinding>
+                                </Label.IsVisible>
+                            </Label>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                BackgroundColor="Transparent"
+                                Command="{Binding Source={x:Reference me}, Path=SelectedItemCommand}"
+                                CommandParameter="{Binding .}"
+                                HeightRequest="20" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </StackLayout>
+        </toolkit:Expander>
+    </VerticalStackLayout>
+</ContentView>
